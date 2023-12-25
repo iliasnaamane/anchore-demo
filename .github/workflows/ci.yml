@@ -1,0 +1,23 @@
+name: Anchore ci
+on: [push]
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Setup docker buildx
+      uses: docker/build-push-action@v4
+      with: 
+        tags: localbuild/testimage:latest
+        push: false
+        load: true
+
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      with: 
+        image: "localbuild/testimage:latest"
+        fail-build: true
+        severity-cutoff: critical
